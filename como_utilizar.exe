@@ -1,0 +1,41 @@
+---Estrutura geral (Visão macro)---
+
+-------Frontend (HTML + CSS)-------
+
+Formulário de avaliação
+
+Componente de estrelas
+
+Upload de imagem
+
+Campo de localização (autocomplete do Google Maps)
+
+Lista de avaliações
+
+                      -----------------------
+
+
+-------Backend (MVC com PHP)-------
+
+Models: Usuário, Restaurante, Avaliação, Imagem
+
+Controllers: Autenticação, Avaliações, Restaurantes
+
+Views: Páginas HTML com dados dinâmicos
+
+Node.js
+
+Microserviço para consumir a Google Maps API (geocodificação, place search, etc.)
+
+Retornar dados para o PHP via requisição HTTP ou fila (vamos discutir qual abordagem usar)
+
+
+---Comandos a utilizados no terminal para rodar o sistema---
+npm init -y (cria o package.json, que é o "coração")
+                      -----------------------
+npm install express axios dotenv (bibliotecas necessárias: Express(web - Node.js), Axios(requisições HTTP), dotenv (chave da API do Google))
+
+                      -----------------------
+
+-------O QUE É : -------
+.ENV - onde vai sua chave da API
