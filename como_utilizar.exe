@@ -1,6 +1,18 @@
+-------Sobre as Pastas-------
+Api - vai trazer as interações com o banco
+
+Controllers - a ponte de ligação entre o Models e o Views
+
+Models - Coração do sistema, vai fazer tudo rodar
+
+Views - Aonde será criado o Frontend
+
+                      -----------------------
+
+
 ---Estrutura geral (Visão macro)---
 
--------Frontend (HTML + CSS)-------
+-------Frontend no Views (HTML + CSS)-------
 
 Formulário de avaliação
 
@@ -23,19 +35,14 @@ Controllers: Autenticação, Avaliações, Restaurantes
 
 Views: Páginas HTML com dados dinâmicos
 
-Node.js
-
 Microserviço para consumir a Google Maps API (geocodificação, place search, etc.)
 
 Retornar dados para o PHP via requisição HTTP ou fila (vamos discutir qual abordagem usar)
 
 
----Comandos a utilizados no terminal para rodar o sistema---
-npm init -y (cria o package.json, que é o "coração")
-                      -----------------------
-npm install express axios dotenv (bibliotecas necessárias: Express(web - Node.js), Axios(requisições HTTP), dotenv (chave da API do Google))
 
-                      -----------------------
 
--------O QUE É : -------
-.ENV - onde vai sua chave da API
+
+
+
+
