@@ -46,3 +46,28 @@ Retornar dados para o PHP via requisição HTTP ou fila (vamos discutir qual abo
 
 
 
+
+
+
+
+API	Ação	Parâmetros	Retorno esperado (JSON)	Observações
+restaurante_api.php	listar	nenhum	[{idRestaurante, nomeRestaurante, endereco, idTags, notaMedia, visualizacao, descricao}, ...]	Retorna todos os restaurantes
+	buscar	idRestaurante	{idRestaurante, nomeRestaurante, endereco, idTags, notaMedia, visualizacao, descricao}	Retorna restaurante específico
+	adicionar	nomeRestaurante, endereco, idTags, notaMedia, descricao	{success: true, idRestaurante: novoId}	Cria restaurante
+	atualizar	idRestaurante, nomeRestaurante?, endereco?, idTags?, notaMedia?, descricao?	{success: true}	Atualiza dados do restaurante
+	deletar	idRestaurante	{success: true}	Remove restaurante
+API	Ação	Parâmetros	Retorno esperado (JSON)	Observações
+salvo_api.php	listar	idUsuario	[{idSalvo, idUsuario, idRestaurante, notaRestaurante, avaliado, descricao}, ...]	Lista todos os salvos de um usuário
+	buscar	idSalvo	{idSalvo, idUsuario, idRestaurante, notaRestaurante, avaliado, descricao}	Retorna salvo específico
+	adicionar	idUsuario, idRestaurante, notaRestaurante?, descricao?	{success: true, idSalvo: novoId}	Adiciona restaurante aos salvos
+	atualizar	idSalvo, notaRestaurante?, descricao?, avaliado?	{success: true}	Atualiza informações do salvo
+	deletar	idSalvo	{success: true}	Remove o salvo
+API	Ação	Parâmetros	Retorno esperado (JSON)	Observações
+tags_api.php	listar	nenhum	[{idTags, nomeTag}, ...]	Lista todas as tags
+	buscar	idTags	{idTags, nomeTag}	Retorna tag específica (opcional)
+API	Ação	Parâmetros	Retorno esperado (JSON)	Observações
+usuario_api.php	listar	nenhum	[{idUsuario, nomeUsuario, email}, ...]	Lista usuários (opcional)
+	buscar	idUsuario	{idUsuario, nomeUsuario, email}	Retorna usuário específico
+	adicionar	nomeUsuario, email, senha	{success: true, idUsuario: novoId}	Cria novo usuário
+	atualizar	idUsuario, nomeUsuario?, email?, senha?	{success: true}	Atualiza informações do usuário
+	deletar	idUsuario	{success: true}	Remove usuário

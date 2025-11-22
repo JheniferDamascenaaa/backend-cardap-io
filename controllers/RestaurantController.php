@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../models/RestaurantModel.php';
+/*require_once __DIR__ . '/../models/RestaurantModel.php';
 
 class RestaurantController {
     private $model;
@@ -20,3 +20,4 @@ class RestaurantController {
     public function update($id) {}
     public function destroy($id) {}
 }
+*/

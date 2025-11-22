@@ -1,5 +1,7 @@
 <?php
-require_once __DIR__ . '/../models/UserModel.php';
+/*require_once __DIR__ . '/../models/UserModel.php';
+require_once __DIR__ . './../models/';
+
 
 class UserController {
     private $model;
@@ -20,3 +22,4 @@ class UserController {
     public function update($id) {}
     public function destroy($id) {}
 }
+*/
