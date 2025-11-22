@@ -1,0 +1,152 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f6efe7;
+  color: #644032;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background-color: #f6efe7;
+}
+
+.logo img {
+  height: 100px;
+}
+
+.icons {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+/* BARRA DE PESQUISA */
+.barra-pesquisa {
+  width: 100%;
+  max-width: 650px;
+  margin: 0 auto 30px auto;
+  background: white;
+  padding: 14px 20px;
+  border-radius: 40px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.barra-pesquisa input {
+  border: none;
+  flex: 1;
+  font-size: 1rem;
+  outline: none;
+  color: #932c30;
+}
+
+.icone-pesquisa {
+  font-size: 1.2rem;
+  color: #932c30;
+}
+
+/* LISTA DE CARDS */
+.cards-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* CARD HORIZONTAL */
+.card {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  align-items: center;
+  padding: 20px;
+  color: #644032;
+  background-color: #ffffff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  border-radius: 10px;
+  text-decoration: none;
+}
+
+/* IMAGEM DO CARD */
+.card-imagem {
+  background-image: url(imagens/china-teste.png);
+  height: 150px;
+  width: 160px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 10px;
+}
+
+/* INFORMAÇÕES DO CARD */
+.card-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.card h3 {
+  font-size: 1.2rem;
+  margin-bottom: 5px;
+}
+
+.card strong {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.card .estrelas {
+  color: #932c30;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+/* TAGS (FAMÍLIA, $$, ETC.) */
+.card .caracteristica {
+  display: flex;
+}
+
+.card .caracteristica p {
+  background-color: #dd9b44;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+/* BOTÃO FLUTUANTE "+" */
+.btn-add {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 50px;
+  height: 50px;
+  background-color: #932c30;
+  color: white;
+  font-size: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  font-weight: bold;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.25);
+  transition: transform 0.2s ease;
+}
+
+.btn-add:hover {
+  transform: scale(1.08);
+}
