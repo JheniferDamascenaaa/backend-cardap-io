@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
 * {
     margin: 0;
     padding: 0;
@@ -5,8 +7,8 @@
 }
 
 body {
-    font-family: 'Arial', sans-serif;
-    background-color: #0f2b3c;
+    font-family: "Montserrat";
+    background-color: #f6efe7;
     
     display: flex;
     justify-content: center;
@@ -15,7 +17,7 @@ body {
 }
 
 .login-container {
-    background-color: #163f58;
+    background-color: #644032;
     width: 100%;
     max-width: 400px;
     padding: 20px;
@@ -28,19 +30,20 @@ body {
 }
 
 .logo {
-    width: 100px;
+    width: 150px;
     margin-bottom: 20px;
 }
 
 h2 {
-    color: #ffffff;
+    color: #f7f0e8;
     font-size: 20px;
+    font-weight: 500;
     margin-bottom: 10px;
 }
 
 p {
-    color: #ffffff;
-    font-size: 14px;
+    color: #f7f0e8;
+    font-size: 12px;
     margin-bottom: 20px;
 }
 
@@ -48,38 +51,44 @@ p {
     margin-bottom: 15px;
 }
 
-input[type="text"], input[type="password"] {
+input[type="text"], input[type="email"], input[type="password"] {
     width: 100%;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    font-size: 14px;
-    color: #333;
+    text-align: center;
+    font-size: 12px;
+    font-weight: bolder;
+    color: #644032;
 }
 
-.forgot-password {
-    display: block;
+.forgot-create {
+    display: block;   
     margin-bottom: 20px;
-    font-size: 12px;
-    color: #ffcb14;
+    font-size: 10px;
+    color: #f7f0e8;
     text-decoration: none;
 }
 
-.forgot-password:hover {
+.forgot-create a {
     text-decoration: underline;
 }
 
+/* .forgot-create a:hover {} */
+    
+
 .login-btn {
-    background-color: #ffcb14;
-    color: #fff;
+    background-color: #dd9b44;
+    color: #644032;
     padding: 10px;
     border: none;
     border-radius: 4px;
     width: 100%;
-    font-size: 16px;
+    font-size: 12px;
+    font-weight: bolder;
     cursor: pointer;
 }
 
 .login-btn:hover {
-    background-color: #ffcb14;
+    background-color: #dd9b44e5;
 }

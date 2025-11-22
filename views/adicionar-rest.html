@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mídia — Cadastrar</title>
+  <link rel="stylesheet" href="adicionar-rest.css" />
+</head>
+
+<body>
+  <header>
+    <a href="home.html" class="logo">
+      <img src="imagens/logo-transparente-marrom.png" alt="Logo" />
+    </a>
+
+    <div class="icons">
+      <svg width="24" height="24" fill="#932c30" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
+        style="margin-right: 15px;">
+        <path d="M10 2a8 8 0 015.29 13.71l5 5a1 1 0 01-1.42 1.42l-5-5A8 8 0 1110 2zm0 2a6 6 0 100 12 6 6 0 000-12z" />
+      </svg>
+      <a href="perfil.html" style="display: inline-block; margin-left: 15px;">
+        <svg width="24" height="24" fill="#932c30" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v3h20v-3c0-3.3-6.7-5-10-5z" />
+        </svg>
+      </a>
+    </div>
+  </header>
+
+  <main class="main">
+    <section class="cadastro-card">
+
+      <form id="form-cadastro" class="card-form" onsubmit="return false;">
+        <div class="left-column">
+          <!-- Área de upload / poster -->
+          <label class="upload-area" id="upload-area" for="input-images">
+            <input type="file" id="input-images" accept="image/*" multiple style="display:none" />
+            <div class="upload-placeholder">
+              <div class="upload-text">Arraste ou clique para adicionar imagens</div>
+            </div>
+          </label>
+
+          <!-- pré-visualizações -->
+          <div class="thumbs" id="thumbs"></div>
+
+          <!-- avaliação 5 estrelas -->
+          <div class="rating-row">
+            <div class="stars" id="stars">
+              <span class="star" data-value="1">☆</span>
+              <span class="star" data-value="2">☆</span>
+              <span class="star" data-value="3">☆</span>
+              <span class="star" data-value="4">☆</span>
+              <span class="star" data-value="5">☆</span>
+            </div>
+            <input type="hidden" name="rating" id="rating-value" value="0" />
+          </div>
+        </div>
+
+        <div class="right-column">
+          <!-- select culinária -->
+          <label for="culinaria">Culinária</label>
+          <select id="culinaria" name="culinaria">
+            <option value="">-- Selecione --</option>
+            <option>Chinesa</option>
+            <option>Italiana</option>
+            <option>Japonesa</option>
+            <option>Brasileira</option>
+            <option>Mexicana</option>
+            <option>Indiana</option>
+            <option>Fast Food</option>
+            <option>Vegana</option>
+          </select>
+
+          <!-- características -->
+          <div class="caracteristicas">
+            <div class="chips">
+              <button type="button" class="chip" data-value="Familia">Família</button>
+              <button type="button" class="chip" data-value="Amigos">Amigos</button>
+              <button type="button" class="chip" data-value="Encontros">Encontros</button>
+            </div>
+          </div>
+
+          <!-- preço -->
+          <div class="precos">
+            <div class="price-options">
+              <label class="price">
+                <input type="radio" name="price" value="$" />
+                <span>$</span>
+              </label>
+              <label class="price">
+                <input type="radio" name="price" value="$$" />
+                <span>$$</span>
+              </label>
+              <label class="price">
+                <input type="radio" name="price" value="$$$" />
+                <span>$$$</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- textarea -->
+          <label for="comentario">Comentário</label>
+          <textarea id="comentario" name="comentario" placeholder="Escreva seu comentário..."></textarea>
+
+          <!-- botao cadastrar -->
+          <div class="actions-row">
+            <button id="btn-cadastrar" class="btn-primary">Cadastrar</button>
+          </div>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <!-- SCRIPTS: imagens, estrelas, chips, pesquisa de culinária, submit -->
+  <script>
+    // ---------- imagens múltiplas com preview e remoção ----------
+    const inputImages = document.getElementById('input-images');
+    const thumbs = document.getElementById('thumbs');
+    const uploadArea = document.getElementById('upload-area');
+
+    let filesArray = [];
+
+    uploadArea.addEventListener('click', (e) => {
+      // abrir o input file
+      inputImages.click();
+    });
+
+    // arrastar e soltar
+    uploadArea.addEventListener('dragover', e => {
+      e.preventDefault();
+      uploadArea.classList.add('dragover');
+    });
+    uploadArea.addEventListener('dragleave', e => {
+      uploadArea.classList.remove('dragover');
+    });
+    uploadArea.addEventListener('drop', e => {
+      e.preventDefault();
+      uploadArea.classList.remove('dragover');
+      const dropped = Array.from(e.dataTransfer.files);
+      handleFiles(dropped);
+    });
+
+    inputImages.addEventListener('change', (e) => {
+      handleFiles(Array.from(e.target.files));
+      inputImages.value = '';
+    });
+
+    function handleFiles(list) {
+      // só aceita imagens
+      const images = list.filter(f => f.type && f.type.startsWith('image/'));
+      images.forEach(file => {
+        filesArray.push(file);
+      });
+      renderThumbs();
+    }
+
+    function renderThumbs() {
+      thumbs.innerHTML = '';
+      filesArray.forEach((file, idx) => {
+        const url = URL.createObjectURL(file);
+        const div = document.createElement('div');
+        div.className = 'thumb';
+        div.innerHTML = `
+          <img src="${url}" alt="thumb">
+          <button type="button" class="remove" data-idx="${idx}">✕</button>
+        `;
+        thumbs.appendChild(div);
+      });
+
+      // remover handler
+      thumbs.querySelectorAll('.remove').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const i = Number(e.target.dataset.idx);
+          filesArray.splice(i, 1);
+          renderThumbs();
+        });
+      });
+    }
+
+    // ---------- estrelas (5) ----------
+    const stars = document.querySelectorAll('#stars .star');
+    const ratingValue = document.getElementById('rating-value');
+
+    stars.forEach(s => {
+      s.addEventListener('click', () => {
+        const v = Number(s.dataset.value);
+        setRating(v);
+      });
+      s.addEventListener('mouseover', () => {
+        highlightStars(Number(s.dataset.value));
+      });
+      s.addEventListener('mouseout', () => {
+        highlightStars(Number(ratingValue.value));
+      });
+    });
+
+    function setRating(v) {
+      ratingValue.value = v;
+      highlightStars(v);
+    }
+
+    function highlightStars(v) {
+      stars.forEach(s => {
+        s.textContent = Number(s.dataset.value) <= v ? '★' : '☆';
+      });
+    }
+
+    // ---------- chips (toggle) ----------
+    document.querySelectorAll('.chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        chip.classList.toggle('active');
+      });
+    });
+
+    // ---------- preço (estilização já em CSS) ----------
+    // nada extra necessário aqui
+
+    // ---------- pesquisa para filtrar o select de culinária ----------
+    const searchCuisine = document.getElementById('search-cuisine');
+    const selectCuisine = document.getElementById('culinaria');
+
+    searchCuisine.addEventListener('input', () => {
+      const q = searchCuisine.value.trim().toLowerCase();
+      [...selectCuisine.options].forEach(opt => {
+        if (opt.value === '') {
+          opt.style.display = '';
+          return;
+        }
+        opt.style.display = opt.text.toLowerCase().includes(q) ? '' : 'none';
+      });
+    });
+
+    // ---------- submit (aqui somente logs; adapte para envio real) ----------
+    const btnCadastrar = document.getElementById('btn-cadastrar');
+    btnCadastrar.addEventListener('click', () => {
+      const culinaria = selectCuisine.value;
+      const caracteristicas = [...document.querySelectorAll('.chip.active')].map(c => c.dataset.value);
+      const price = document.querySelector('input[name="price"]:checked')?.value || '';
+      const rating = ratingValue.value;
+      const comentario = document.getElementById('comentario').value;
+
+      // arquivos (filesArray) prontos para upload
+      console.log({
+        culinaria,
+        caracteristicas,
+        price,
+        rating,
+        comentario,
+        imagesCount: filesArray.length
+      });
+
+      alert('Dados preparados no console (simulação). Substitua por envio ao servidor.');
+    });
+  </script>
+</body>
+
+</html>

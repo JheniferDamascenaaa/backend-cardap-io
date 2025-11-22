@@ -37,8 +37,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $resultado = json_decode($response, true);
             if (!empty($resultado['success'])) {
-                $sucesso = "Cadastro realizado com sucesso! Você será redirecionado para a pagina de login";
-                header("refresh:3;url=login.php");
+                $sucesso = "Cadastro realizado com sucesso! Faça login";
+                header("refresh:3");
                 
             } else {
                 $erro = $resultado['message'] ?? 'Email ou senha incorretos';
@@ -54,49 +54,47 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 
 
+
+
+
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<title>Cadastro de Usuário</title>
-
-<style>
-  body { font-family: Arial, sans-serif; background:#FFF7F2; margin:0; }
-  header { text-align:center; padding:40px 0; font-size:42px; font-weight:700; color:#3A2D2D; }
-  .container { width:50%; margin:0 auto; padding:40px; }
-  h2 { text-align:center; font-size:32px; color:#3A2D2D; }
-  label { display:block; margin-top:25px; font-size:20px; color:#3A2D2D; }
-  input { width:100%; height:45px; border-radius:10px; border:1px solid #ccc; padding:10px; font-size:18px; }
-  .btn { margin-top:40px; width:100%; background:#A22525; color:white; padding:18px; border:none; border-radius:20px; font-size:22px; cursor:pointer; }
-  .login { margin-top:20px; text-align:center; font-size:18px; }
-  .login a { color:#000; font-weight:bold; }
-</style>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>hitOUflop - Login</title>
+<!--    <link rel="stylesheet" href="login.css">  -->
+    <link rel="stylesheet" href="/views/estilos/login.css">
 </head>
 <body>
-<header>Cardap.io</header>
-<div class="container">
+    <div class="login-container">
+        <div class="login-box">
+            <img src="imagens/logo-transparente.png" alt="Logo" class="logo">
+            <h2>Cadastre-se</h2>
+            <form action="" method="POST">
+                <div class="input-group">
+                    <input type="text" name="nome" id="username" placeholder="NOME" required>
+                </div>
 
-  <form method="POST" action="">
-    <h2>Cadastro</h2>
+                <div class="input-group">
+                    <input type="email" name="email" id="e-mail" placeholder="E-MAIL" required>
+                </div>
 
-    <label>Nome</label>
-    <input type="text" name="nome" required />
+                <div class="input-group">
+                    <input type="password" name="senha" id="password" placeholder="SENHA" required>
+                </div>
 
-    <label>E-mail</label>
-    <input type="text" name="email" required />
+            <!--<div class="input-group">
+                    <input type="password" name="password" id="password" placeholder="CONFIRMAR SENHA" required>
+                </div>  -->
+                
+                <button type="submit" class="login-btn">CADASTRAR</button>
+                </div>
+                <br> 
+                    <p class="forgot-create" style="display: flex;">Já tem conta?<a href="login.php" class="forgot-create" style="margin-left: 5px;">ENTRAR</a></p>
+            </form>
 
-    <label>Senha</label>
-    <input type="password" name="senha" required />
-
-    <!-- <label>Confirme sua senha</label>
-    <input type="confirma_senha" name="confirma_senha" required />-->
-
-    <button type="submit" class="btn">Cadastrar</button>
-
-    <div class="login">Já tem conta? <a href="login.php">Entrar</a></div>
-  </form>
-
-        <?php if (!empty($erro)): ?>
+                       <?php if (!empty($erro)): ?>
             <div style="
                 background:#ffdddd;
                 color:#a20000;
@@ -122,6 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
         <?php endif; ?>
 
-</div>
+        </div>
+    </div>
 </body>
 </html>

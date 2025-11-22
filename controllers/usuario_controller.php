@@ -64,5 +64,17 @@ class UsuarioController {
 
         return ['success' => false, 'message' => 'Email ou senha incorretos'];
     }
+
+    public function sair(){
+        session_start();
+        // Limpa todas as variáveis de sessão
+        $_SESSION = [];
+        // Destroi a sessão
+        session_destroy();
+        // Redireciona para a página de login
+        header("Location: ../views/login.php");
+        exit;
+
+    }
 }
 ?>

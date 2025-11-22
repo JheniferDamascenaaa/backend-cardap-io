@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $resultado = json_decode($response, true);
             if (!empty($resultado['success'])) {
                 $_SESSION['usuario'] = $resultado['usuario'];
-                header('Location: pagina-inicial.html');
+                header('Location: home.html');
                 exit;
             } else {
                 $erro = $resultado['message'] ?? 'Email ou senha incorretos';
@@ -47,36 +47,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 
+
+
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>hitOUflop - Login</title>
-    <link rel="stylesheet" href="login.css">
+    <link rel="stylesheet" href="../views/estilos/login.css">
 </head>
 <body>
     <div class="login-container">
         <div class="login-box">
-            <img src="imagens/logo1.png" alt="Logo" class="logo">
+            <img src="imagens/logo-transparente.png" alt="Logo" class="logo">
             <h2>Seja bem-vindo</h2>
-            <p>Faça login abaixo para acessar</p>
-
-            <?php if (!empty($erro)) : ?>
-                <p style="color:red;"><?php echo htmlspecialchars($erro); ?></p>
-            <?php endif; ?>
-
+            <p>FAÇA LOGIN ABAIXO PARA ACESSAR</p>
             <form action="login.php" method="POST">
                 <div class="input-group">
-                    <input type="email" name="email" id="email" placeholder="Digite o seu email" required>
+                    <input type="text" name="email" id="e-mail" placeholder="DIGITE O SEU E-MAIL" required>
                 </div>
                 <div class="input-group">
-                    <input type="password" name="senha" id="senha" placeholder="Digite a sua senha" required>
+                    <input type="password" name="senha" id="password" placeholder="DIGITE A SUA SENHA" required>
                 </div>
-                <button type="submit" class="login-btn">Login</button>
+                <button type="submit" class="login-btn">LOGIN</button>
+                </div>
                 <br> 
-                <a href="" class="forgot-password">Esqueci minha senha</a>
-                <a href="cadastro-usuario.php" class="forgot-password">Cadastre-se</a>
+                <div class="infos" style="display: flex; justify-content: space-between;">
+                    <a href="esqueceu.html" class="forgot-create">ESQUECI MINHA SENHA</a>
+                    <a href="cadastrar.php" class="forgot-create">CADASTRE-SE</a>
+                </div>
             </form>
         </div>
     </div>

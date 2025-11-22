@@ -1,0 +1,258 @@
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f6efe7 ;
+  height: 100%;
+  color: #644032;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background-color: #f6efe7;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+.logo img {
+  height: 100px;
+  width: auto;
+}
+
+.icons {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.btn-sair {
+  background-color: #dd9b44;
+  color: #f6efe7;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.perfil-container {
+  max-width: 800px;
+  margin: 30px auto;
+  padding: 0 20px;
+}
+
+.perfil-topo {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.btn-voltar {
+  position: absolute;
+  left: -60px;
+  top: -50px;
+  background: none;
+  border: none;
+  color: #932c30;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+
+.foto-perfil {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  aspect-ratio: 1 / 1;
+  background-color: #d9e7ec;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
+  color: #644032;
+}
+
+.btn-foto {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background-color: #dd9b44;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.info-usuario {
+  width: 100%;
+}
+
+.info-usuario h2 {
+  font-size: 1.5rem;
+  margin-bottom: 5px;
+}
+
+.btn-nome {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-left: 8px;
+  color: #932c30;
+  display: inline-flex;
+  align-items: center;
+  padding: 2px;
+}
+
+.info-usuario hr, .card hr {
+  border: none;
+  height: 2px;
+  margin: 10px 0 8px;
+  width: 100%;
+}
+
+
+.info-usuario p {
+  font-size: 1rem;
+}
+
+.cards-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+
+/* Torna o card horizontal */
+.card {
+    display: flex;
+    flex-direction: row; /* antes era column */
+    gap: 20px;
+    align-items: center;
+    padding: 20px;
+    color: #644032;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    text-decoration: none;
+}
+
+/* Ajusta tamanho da imagem no card */
+.card-imagem {
+    background-image:url(imagens/china-teste.png) ;
+    height: 150px;
+    width: 160px;
+    background-size: cover; /* Ajusta a imagem para cobrir o elemento */
+    background-position: center; /* Centraliza a imagem */
+    border-radius: 10px;
+}
+
+/* Garante que as informações fiquem bem organizadas */
+.card-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+
+.card .card-topo div {
+display: flex;
+flex-direction: column;
+gap: 10px;
+}
+
+.card h3 {
+  font-size: 1.2rem;
+  margin-bottom: 5px;
+}
+
+.card strong {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.card .card-info .estrelas {
+  color: #932C30;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.card .caracteristica {
+  display: flex;
+}
+
+.card .caracteristica p {
+  background-color: #dd9b44;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: bold;
+  margin-right: 10px ;
+}
+
+.acoes {
+  display: flex;
+  gap: 15px;
+  margin-left: auto;
+  margin-right: 7%;
+}
+
+.acoes button {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  background-color: transparent;
+  border: 2px solid white;
+  color: white;
+  font-size: 1rem;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.acoes button.ativo {
+  border-color: #dd9b44;
+}
+
+.acoes button.ativo svg {
+  fill: #dd9b44;
+}
+
+.input-nome {
+  display: none;
+  font-size: 1.5rem;
+  padding: 4px 8px;
+  width: 100%;
+  max-width: 400px;
+  /* border: 2px solid #644032; */
+  border-radius: 6px;
+  background-color: #644032;
+  color: white;
+}
+
+.nome-editavel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
