@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 15/11/2025 às 03:49
+-- Tempo de geração: 22/11/2025 às 01:50
 -- Versão do servidor: 10.4.32-MariaDB
 -- Versão do PHP: 8.0.30
 
@@ -60,14 +60,6 @@ CREATE TABLE `tb_salvo` (
   `descricao` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
---
--- Despejando dados para a tabela `tb_salvo`
---
-
-INSERT INTO `tb_salvo` (`idSalvo`, `idUsuario`, `idRestaurante`, `notaRestaurante`, `avaliado`, `descricao`) VALUES
-(6, 1, 2, '5', 1, 'Melhor massa que já comi!'),
-(7, 1, 3, '4', 0, 'Ainda quero experimentar mais pratos');
-
 -- --------------------------------------------------------
 
 --
@@ -106,7 +98,14 @@ CREATE TABLE `tb_usuario` (
 --
 
 INSERT INTO `tb_usuario` (`idUsuario`, `nomeUsuario`, `email`, `senha`) VALUES
-(1, 'Jheni', 'jheni@jheni.com', '123');
+(5, 'Kamis', 'kamis@kamis.com', '$2y$10$/sgIKWj0CPHxGWSwrVmMX.IWSbzPCae7he/M88qDLXUnewGFeY3.u'),
+(6, 'Julia', 'julia@email.com', '$2y$10$WOha.XNP7Q5xU/WKADYCBu9nBBCMKqL7TTFdClxApWsKEe3wtJu5C'),
+(8, 'Kamis', 'kamis@kamis.com', '$2y$10$.aG7KMJQ01Za7MiSx032OulN7cb91o4K1GS3RHUYcfDYQpdCAYIdm'),
+(9, 'Julia', 'julia@email.com', '$2y$10$CdCOZPK6QYmrkpVHPjGyYOFqOcjHJiu6eguzg3hR30ST830B2PHki'),
+(10, 'Gustavo', 'gustavo@gustavo.com', '$2y$10$SQ/eVxn3ie7z/Fs7VX4dG.fQPeQ/VyuQA9UzLiBVfE9mjaP68ytWy'),
+(11, 'Amanda', 'amanda@amanda.com', '$2y$10$vJjmHomnUvNlCZUhTQEXqeSL5jeuJ/6jK2BrZFLHhkp0qcODYYUWK'),
+(12, 'Davi', 'davi@davi.com', '$2y$10$9UJpV3.4sre/6Xrr6znAcunXm0I4NhaujtBV1yr44vSyGs5BHfDua'),
+(13, 'Felipe', 'felipe@felipe.com', '$2y$10$nnUbC/ihVX32XrWcaoLDs.Apm69V/3D1XxVaOh1Q0UBL/ctt6oXue');
 
 --
 -- Índices para tabelas despejadas
@@ -165,7 +164,7 @@ ALTER TABLE `tb_tags`
 -- AUTO_INCREMENT de tabela `tb_usuario`
 --
 ALTER TABLE `tb_usuario`
-  MODIFY `idUsuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `idUsuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- Restrições para tabelas despejadas
