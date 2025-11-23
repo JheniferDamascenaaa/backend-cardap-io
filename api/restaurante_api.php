@@ -1,73 +1,60 @@
 <?php
-// Configurações e cabeçalhos
-header('Content-Type: application/json');
 
-require_once '../config/database.php';
+header("Content-Type: application/json");
 
-require_once '../controllers/restaurante_controller.php';
+require_once __DIR__ . '/database.php';
+require_once __DIR__ . '/../controllers/restaurante_controller.php';
 
-// Instancia a conexão e o controller
-$database = new Database();
-$db = $database->conectar();
-$restauranteController = new RestauranteController($db);
 
-$action = $_GET['action'] ?? $_POST['action'] ?? '';
 
-$response = [];
+$database = new Banco();
+$banco = $database->getConexao();
+$controller = new RestauranteController($banco);
 
-switch($action) {
-    
-    case 'listar':
-        $response = $restauranteController->listar();
-        break;
+// Método HTTP usado
+$metodo = $_SERVER['REQUEST_METHOD'];
 
-    case 'buscar':
-        $id = $_GET['idRestaurante'] ?? $_POST['idRestaurante'] ?? null;
-        if($id) {
-            $response = $restauranteController->buscarPorId($id);
+// Caminho da URL (ex: /api/restaurante/3)
+$path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$parts = explode('/', trim($path, '/'));
+
+// Obtém o último segmento da URL como ID, se for numérico
+$id = end($parts);
+$id = is_numeric($id) ? intval($id) : null;
+
+// Lê JSON quando necessário (POST e PUT)
+$input = json_decode(file_get_contents("php://input"), true) ?? [];
+
+switch ($metodo) {
+
+    case 'GET':
+        if ($id) {
+            echo json_encode($controller->buscarPorId($id));
         } else {
-            $response = ['error' => 'Parâmetro idRestaurante não fornecido'];
+            echo json_encode($controller->listar());
         }
         break;
 
-    case 'adicionar':
-        $dados = [
-            'nomeRestaurante' => $_POST['nomeRestaurante'] ?? null,
-            'endereco' => $_POST['endereco'] ?? null,
-            'idTags' => $_POST['idTags'] ?? null,
-            'notaMedia' => $_POST['notaMedia'] ?? null,
-            'descricao' => $_POST['descricao'] ?? null
-        ];
-        $response = $restauranteController->adicionar($dados);
+    case 'POST':
+        echo json_encode($controller->adicionar($input));
         break;
 
-    case 'atualizar':
-        $id = $_POST['idRestaurante'] ?? null;
-        $dados = [
-            'nomeRestaurante' => $_POST['nomeRestaurante'] ?? null,
-            'endereco' => $_POST['endereco'] ?? null,
-            'idTags' => $_POST['idTags'] ?? null,
-            'notaMedia' => $_POST['notaMedia'] ?? null,
-            'descricao' => $_POST['descricao'] ?? null
-        ];
-        if($id) {
-            $response = $restauranteController->atualizar($id, $dados);
+    case 'PUT':
+        if ($id) {
+            echo json_encode($controller->atualizar($id, $input));
         } else {
-            $response = ['error' => 'Parâmetro idRestaurante não fornecido'];
+            echo json_encode(['error' => 'ID não informado']);
         }
         break;
 
-    case 'deletar':
-        $id = $_POST['idRestaurante'] ?? $_GET['idRestaurante'] ?? null;
-        if($id) {
-            $response = $restauranteController->deletar($id);
+    case 'DELETE':
+        if ($id) {
+            echo json_encode($controller->deletar($id));
         } else {
-            $response = ['error' => 'Parâmetro idRestaurante não fornecido'];
+            echo json_encode(['error' => 'ID não informado']);
         }
         break;
 
     default:
-        $response = ['error' => 'Ação inválida ou não fornecida'];
+        echo json_encode(['error' => 'Método HTTP não suportado']);
 }
-
-echo json_encode($response);
