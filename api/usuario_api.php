@@ -10,10 +10,9 @@ $banco = new Banco();
 $conexao = $banco->getConexao();
 $usuarioController = new UsuarioController($conexao);
 
-// Método HTTP
+
 $method = $_SERVER['REQUEST_METHOD'];
 
-// Caminho da URL (ex: /cardapio-back/api/usuario/1)
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $parts = explode('/', trim($path, '/'));
 
@@ -34,9 +33,7 @@ switch ($method) {
         }
         break;
 
-/*    case 'POST':
-        echo json_encode($usuarioController->adicionar($_POST ?: $input));
-        break; */
+
 
     case 'POST':
         // Se vier email e senha, mas sem nomeUsuario → login

@@ -11,10 +11,9 @@ $database = new Banco();
 $banco = $database->getConexao();
 $controller = new RestauranteController($banco);
 
-// Método HTTP usado
 $metodo = $_SERVER['REQUEST_METHOD'];
 
-// Caminho da URL (ex: /api/restaurante/3)
+
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $parts = explode('/', trim($path, '/'));
 
@@ -57,4 +56,4 @@ switch ($metodo) {
 
     default:
         echo json_encode(['error' => 'Método HTTP não suportado']);
-}
+}  

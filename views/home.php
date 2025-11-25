@@ -1,17 +1,55 @@
+<?php
+$apiUrl = "http://localhost/cardapio-back/api/restaurante_api.php";
+
+$restaurantes = json_decode(file_get_contents($apiUrl), true);
+
+// Se der erro, evita quebrar a página
+if (!is_array($restaurantes)) {
+    $restaurantes = [];
+}
+
+// Convertendo ID da tag para nome
+function tagNome($id) {
+    $tags = [
+        1 => "Chinesa",
+        2 => "Italiana",
+        3 => "Japonesa",
+        4 => "Brasileira",
+        5 => "Mexicana",
+        6 => "Indiana",
+        7 => "Fast Food",
+        8 => "Vegana",
+        9 => "Argentina",
+    ];
+    return $tags[$id] ?? "Outro";
+}
+
+// Gerar estrelas ★★★☆☆
+function gerarEstrelas($nota) {
+    $cheias = round($nota);
+    $html = "";
+    for ($i = 1; $i <= 5; $i++) {
+        $html .= $i <= $cheias ? "★" : "☆";
+    }
+    return $html;
+}
+?>
+
+
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR"> 
 
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Página Inicial</title>
-    <link rel="stylesheet" href="home-style.css" />  
+    <link rel="stylesheet" href="./estilos/home-style.css" />  
 </head>
 
 <body>
 
     <header>
-        <a href="home.html" class="logo">
+        <a href="home.php" class="logo">
             <img src="imagens/logo-transparente-marrom.png" alt="Logo" />
         </a>
 
@@ -33,54 +71,44 @@
 
     <!-- LISTA DE RESTAURANTES -->
     <div class="cards-container">
+  
 
-        <a href="restaurante.html" class="card">
+         <?php foreach ($restaurantes as $r): ?>
 
-                <img src="imagens/spoleto___5kf_US12T4ZtglivHStU2.jpg" alt="" class="card-imagem">
+        <a href="restaurante.php?id=<?= $r['idRestaurante'] ?>" class="card">
 
-            <div class="card-info">
-                <div class="card-topo">
-                    <div>
-                        <h3>Spoleto</h3>
-                        <strong>Italiana</strong>
-                    </div>
-                </div>
-
-                <div class="caracteristica">
-                    <p>$$$</p>
-                    <p>Família</p>
-                    <p>Amigos</p>
-                </div>
-
-                <div class="estrelas">★★★☆☆</div>
-            </div>
-        </a>
-
-        <a href="restaurante.html" class="card">
-
-                <div class="card-imagem"></div>
+            <img src="<?= $r['imagemPrincipal'] ?: 'imagens/placeholder.jpg' ?>" 
+                 alt="Imagem do restaurante" 
+                 class="card-imagem">
 
             <div class="card-info">
                 <div class="card-topo">
                     <div>
-                        <h3>China in Box</h3>
-                        <strong>Chinesa</strong>
+                        <h3><?= htmlspecialchars($r['nomeRestaurante']) ?></h3>
+                        <strong><?= tagNome($r['idTags']) ?></strong>
                     </div>
                 </div>
 
                 <div class="caracteristica">
-                    <p>$$</p>
-                    <p>Família</p>
+                    <p><?= $r['preco'] ?></p>
+
+                    <?php 
+                    $caracteristicas = explode(",", $r['caracteristicas']);
+                    foreach ($caracteristicas as $c): ?>
+                        <p><?= trim($c) ?></p>
+                    <?php endforeach; ?>
                 </div>
 
-                <div class="estrelas">★★★☆☆</div>
+                <div class="estrelas"><?= gerarEstrelas($r['notaMedia']) ?></div>
             </div>
         </a>
+
+    <?php endforeach; ?>
 
     </div>
 
     <!-- BOTÃO FLUTUANTE "+" -->
-    <a href="adicionar-rest.html" class="btn-add">+</a>
+    <a href="adicionar_restaurante.php" class="btn-add">+</a>
 
     <!-- FILTRAGEM DA BARRA DE PESQUISA -->
 <script>

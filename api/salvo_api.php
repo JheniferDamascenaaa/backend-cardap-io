@@ -5,7 +5,7 @@ require_once __DIR__ . "/database.php";
 $banco = new Banco();
 $db = $banco->getConexao();
 
-// Método HTTP
+
 $method = $_SERVER["REQUEST_METHOD"];
 
 // URL → pegar ID se existir
@@ -17,12 +17,10 @@ $id = is_numeric($id) ? intval($id) : null;
 // JSON recebido
 $input = json_decode(file_get_contents("php://input"), true) ?? [];
 
-// ============================
-// GET → LISTAR OU BUSCAR
-// ============================
+
 if ($method === "GET") {
 
-    // /salvo_api.php?usuario=1
+   
     if (isset($_GET["usuario"])) {
         $query = $db->prepare("SELECT * FROM tb_salvo WHERE idUsuario = ?");
         $query->execute([$_GET["usuario"]]);
@@ -30,7 +28,7 @@ if ($method === "GET") {
         exit;
     }
 
-    // /salvo_api.php/5  → buscar por ID
+ 
     if ($id) {
         $query = $db->prepare("SELECT * FROM tb_salvo WHERE idSalvo = ?");
         $query->execute([$id]);
@@ -38,35 +36,40 @@ if ($method === "GET") {
         exit;
     }
 
-    echo json_encode(["erro" => "Use ?usuario=ID ou /salvo_api.php/ID"]);
+
+        $query = $db->query("
+        SELECT s.*, u.nomeUsuario
+        FROM tb_salvo s
+        INNER JOIN tb_usuario u ON u.idUsuario = s.idUsuario
+    ");
+    echo json_encode($query->fetchAll(PDO::FETCH_ASSOC));
     exit;
 }
 
-// ============================
-// POST → ADICIONAR
-// ============================
+
+
 if ($method === "POST") {
     $query = $db->prepare("
-    INSERT INTO tb_salvo (idUsuario, idRestaurante, notaRestaurante, avaliado, descricao)
-    VALUES (?, ?, ?, ?, ?)
+        INSERT INTO tb_salvo 
+        (idUsuario, idRestaurante, notaRestaurante, descricao, preco, caracteristicas)
+        VALUES (?, ?, ?, ?, ?, ?)
     ");
 
     $query->execute([
-        $input["idUsuario"],
-        $input["idRestaurante"],
-        $input["notaRestaurante"],
-        $input["avaliado"],    // adicionar aqui
-        $input["descricao"]
+        $input["idUsuario"] ?? null,
+        $input["idRestaurante"] ?? null,
+        $input["notaRestaurante"] ?? 0,
+        $input["descricao"] ?? "",
+        $input["preco"] ?? "",
+        $input["caracteristicas"] ?? ""
     ]);
 
-
-    echo json_encode(["status" => "ok", "idNovo" => $db->lastInsertId()]);
+    echo json_encode(["status" => "ok"]); // sem idNovo
     exit;
 }
 
-// ============================
-// PUT → ATUALIZAR
-// ============================
+
+
 if ($method === "PUT") {
 
     if (!$id) {
@@ -75,25 +78,28 @@ if ($method === "PUT") {
     }
 
     // Pega os valores do JSON ou define padrão
-    $nota = isset($input["notaRestaurante"]) ? $input["notaRestaurante"] : null;
-    $descricao = isset($input["descricao"]) ? $input["descricao"] : "";
-    $avaliado = isset($input["avaliado"]) ? $input["avaliado"] : 0; // valor padrão
+    $idUsuario = $input["idUsuario"] ?? null;
+    $idRestaurante = $input["idRestaurante"] ?? null;
+    $nota = $input["notaRestaurante"] ?? null;
+    $descricao = $input["descricao"] ?? "";
+    $preco = $input["preco"] ?? "";
+    $caracteristicas = $input["caracteristicas"] ?? "";
 
     $query = $db->prepare("
-        UPDATE tb_salvo 
-        SET notaRestaurante = ?, descricao = ?, avaliado = ?
+        UPDATE tb_salvo
+        SET idUsuario = ?, idRestaurante = ?, notaRestaurante = ?, descricao = ?, preco = ?, caracteristicas = ?
         WHERE idSalvo = ?
     ");
 
-    $query->execute([$nota, $descricao, $avaliado, $id]);
+    $query->execute([$idUsuario, $idRestaurante, $nota, $descricao, $preco, $caracteristicas, $id]);
 
     echo json_encode(["status" => "atualizado"]);
     exit;
 }
 
-// ============================
-// DELETE → DELETAR
-// ============================
+
+
+
 if ($method === "DELETE") {
 
     if (!$id) {

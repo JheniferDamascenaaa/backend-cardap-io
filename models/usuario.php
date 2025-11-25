@@ -23,17 +23,6 @@ class Usuario {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }  
 
-    /*ublic function buscar_por_email(){
-        // Remove espaços e força lowercase
-        $email = trim(strtolower($this->email));
-
-        $query = "SELECT * FROM " . $this->tabela . " WHERE LOWER(email) = ?";
-        $stmt = $this->conexao->prepare($query);
-        $stmt->bindParam(1, $email);
-        $stmt->execute();
-        return $stmt->fetch(PDO::FETCH_ASSOC);
-    } */
-
 
 
     // Adiciona usuário (com hash da senha)

@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $resultado = json_decode($response, true);
             if (!empty($resultado['success'])) {
                 $_SESSION['usuario'] = $resultado['usuario'];
-                header('Location: home.html');
+                header('Location: home.php');
                 exit;
             } else {
                 $erro = $resultado['message'] ?? 'Email ou senha incorretos';

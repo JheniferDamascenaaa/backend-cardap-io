@@ -5,7 +5,6 @@ require_once __DIR__ . "/database.php";
 $banco = new Banco();
 $db = $banco->getConexao();
 
-// Pega o método HTTP
 $method = $_SERVER["REQUEST_METHOD"];
 
 // Pega o ID da URL ou da query string
@@ -20,9 +19,7 @@ if (isset($_GET['id'])) {
 // Pega JSON enviado
 $input = json_decode(file_get_contents("php://input"), true) ?? [];
 
-// ============================
-// GET → Listar ou buscar
-// ============================
+
 if ($method === "GET") {
 
     if ($id) {
@@ -39,9 +36,7 @@ if ($method === "GET") {
     exit;
 }
 
-// ============================
-// POST → Adicionar
-// ============================
+
 if ($method === "POST") {
 
     $nomeTag = $input['nomeTag'] ?? '';
@@ -58,9 +53,7 @@ if ($method === "POST") {
     exit;
 }
 
-// ============================
-// PUT → Atualizar
-// ============================
+
 if ($method === "PUT") {
 
     if (!$id) {
@@ -77,9 +70,7 @@ if ($method === "PUT") {
     exit;
 }
 
-// ============================
-// DELETE → Deletar
-// ============================
+
 if ($method === "DELETE") {
 
     if (!$id) {

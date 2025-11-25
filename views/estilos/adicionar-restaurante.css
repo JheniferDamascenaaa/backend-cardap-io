@@ -254,6 +254,21 @@ textarea#comentario {
   font-family: inherit;
 }
 
+
+.comentario_restaurante,
+.comentario_endereco {
+  width: 100%;
+  min-height: 120px;
+  padding: 10px; /* não percentagem */
+  border-radius: 2px;
+  border: 2px solid #932c30;
+  background: rgba(255,255,255,0.02); /* um pouco mais visível que 0.02 */
+  color: #644032;
+  resize: vertical;
+  font-family: inherit;
+}
+
+
 .actions-row {
   margin-top: 8px;
 }

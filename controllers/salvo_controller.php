@@ -1,112 +1,87 @@
 <?php
-header("Content-Type: application/json");
-require_once __DIR__ . "/database.php";
 
-$banco = new Banco();
-$db = $banco->getConexao();
+class Salvo {
 
-// Pega o método HTTP
-$method = $_SERVER["REQUEST_METHOD"];
+    private $conexao;
+    private $tabela = 'tb_salvo';
 
-// Pega o ID da URL ou da query string
-$path = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
-$parts = explode("/", trim($path, "/"));
-$id = end($parts);
-$id = is_numeric($id) ? intval($id) : null;
-if (isset($_GET['id'])) {
-    $id = intval($_GET['id']);
-}
+    // Atributos correspondentes à tabela
+    public $idSalvo;
+    public $idUsuario;
+    public $idRestaurante;
+    public $notaRestaurante;
+    public $descricao;
+    public $preco;
+    public $caracteristicas;
 
-// Pega JSON enviado
-$input = json_decode(file_get_contents("php://input"), true) ?? [];
-
-// ============================
-// GET → Listar ou buscar
-// ============================
-if ($method === "GET") {
-
-    if (isset($_GET["usuario"])) {
-        // Lista todos os salvos de um usuário
-        $query = $db->prepare("SELECT * FROM tb_salvo WHERE idUsuario = ?");
-        $query->execute([$_GET["usuario"]]);
-        echo json_encode($query->fetchAll(PDO::FETCH_ASSOC));
-        exit;
+    public function __construct($Banco) {
+        $this->conexao = $Banco;
     }
 
-    if ($id) {
-        // Busca por ID
-        $query = $db->prepare("SELECT * FROM tb_salvo WHERE idSalvo = ?");
-        $query->execute([$id]);
-        echo json_encode($query->fetch(PDO::FETCH_ASSOC));
-        exit;
+    // Adiciona uma avaliação
+   public function adicionar($dados) {
+        $query = "INSERT INTO " . $this->tabela . " 
+                  (idUsuario, idRestaurante, notaRestaurante, descricao, preco, caracteristicas) 
+                  VALUES (?, ?, ?, ?, ?, ?)";
+        $stmt = $this->conexao->prepare($query);
+
+        return $stmt->execute([
+            $dados['idUsuario'],
+            $dados['idRestaurante'],
+            $dados['notaRestaurante'],
+            $dados['descricao'],
+            $dados['preco'],
+            $dados['caracteristicas']
+        ]);
+    } 
+    // Atualiza uma avaliação
+    public function atualizar($id, $dados) {
+        $query = "UPDATE " . $this->tabela . " 
+                  SET idUsuario = ?, idRestaurante = ?, notaRestaurante = ?, descricao = ?, preco = ?, caracteristicas = ? 
+                  WHERE idSalvo = ?";
+        $stmt = $this->conexao->prepare($query);
+
+        return $stmt->execute([
+            $dados['idUsuario'],
+            $dados['idRestaurante'],
+            $dados['notaRestaurante'],
+            $dados['descricao'],
+            $dados['preco'],
+            $dados['caracteristicas'],
+            $id
+        ]);
     }
 
-    echo json_encode(["erro" => "Use ?usuario=ID ou ?id=ID"]);
-    exit;
-}
-
-// ============================
-// POST → Adicionar
-// ============================
-if ($method === "POST") {
-    $query = $db->prepare("
-        INSERT INTO tb_salvo (idUsuario, idRestaurante, notaRestaurante, descricao, avaliado)
-        VALUES (?, ?, ?, ?, ?)
-    ");
-
-    $query->execute([
-        $input["idUsuario"] ?? 0,
-        $input["idRestaurante"] ?? 0,
-        $input["notaRestaurante"] ?? "",
-        $input["descricao"] ?? "",
-        $input["avaliado"] ?? 0
-    ]);
-
-    echo json_encode(["status" => "ok", "idNovo" => $db->lastInsertId()]);
-    exit;
-}
-
-// ============================
-// PUT → Atualizar
-// ============================
-if ($method === "PUT") {
-
-    if (!$id) {
-        echo json_encode(["erro" => "ID não informado"]);
-        exit;
+    // Deleta uma avaliação
+    public function deletar($id) {
+        $query = "DELETE FROM " . $this->tabela . " WHERE idSalvo = ?";
+        $stmt = $this->conexao->prepare($query);
+        return $stmt->execute([$id]);
     }
 
-    $nota = $input["notaRestaurante"] ?? null;
-    $descricao = $input["descricao"] ?? "";
-    $avaliado = $input["avaliado"] ?? 0;
-
-    $query = $db->prepare("
-        UPDATE tb_salvo 
-        SET notaRestaurante = ?, descricao = ?, avaliado = ?
-        WHERE idSalvo = ?
-    ");
-
-    $query->execute([$nota, $descricao, $avaliado, $id]);
-
-    echo json_encode(["status" => "atualizado"]);
-    exit;
-}
-
-// ============================
-// DELETE → Deletar
-// ============================
-if ($method === "DELETE") {
-
-    if (!$id) {
-        echo json_encode(["erro" => "ID não informado"]);
-        exit;
+    // Lista todas as avaliações
+    public function listar() {
+        $query = "SELECT * FROM " . $this->tabela;
+        $stmt = $this->conexao->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    $query = $db->prepare("DELETE FROM tb_salvo WHERE idSalvo = ?");
-    $query->execute([$id]);
+    // Busca uma avaliação pelo ID
+    public function buscar_por_id($id) {
+        $query = "SELECT * FROM " . $this->tabela . " WHERE idSalvo = ?";
+        $stmt = $this->conexao->prepare($query);
+        $stmt->execute([$id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 
-    echo json_encode(["status" => "deletado"]);
-    exit;
+    // Lista avaliações de um usuário específico
+    public function listar_por_usuario($idUsuario) {
+        $query = "SELECT * FROM " . $this->tabela . " WHERE idUsuario = ?";
+        $stmt = $this->conexao->prepare($query);
+        $stmt->execute([$idUsuario]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
 
-echo json_encode(["erro" => "Método não permitido"]);
+?>
