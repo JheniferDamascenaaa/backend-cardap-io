@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>hitOUflop - Login</title>
 <!--    <link rel="stylesheet" href="login.css">  -->
-    <link rel="stylesheet" href="/views/estilos/login.css">
+    <link rel="stylesheet" href="../views/estilos/login.css">
 </head>
 <body>
     <div class="login-container">
