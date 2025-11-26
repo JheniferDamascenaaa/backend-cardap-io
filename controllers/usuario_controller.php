@@ -18,23 +18,37 @@ class UsuarioController {
         return $usuario ?: ['error' => 'Usuário não encontrado'];
     }
 
+
+
     public function adicionar($dados) {
-        if (!isset($dados['nomeUsuario'], $dados['email'], $dados['senha'])) {
-            return ['error' => 'Todos os campos são obrigatórios'];
-        }
-
-        $sucesso = $this->usuarioModel->adicionar($dados);
-        return $sucesso
-            ? ['success' => true, 'message' => 'Usuário adicionado com sucesso']
-            : ['success' => false, 'message' => 'Erro ao adicionar usuário'];
+    if (!isset($dados['nomeUsuario'], $dados['email'], $dados['senha'])) {
+        return ['error' => 'Todos os campos são obrigatórios'];
     }
 
-    public function atualizar($id, $dados) {
-        $sucesso = $this->usuarioModel->atualizar($id, $dados);
-        return $sucesso
-            ? ['success' => true, 'message' => 'Usuário atualizado com sucesso']
-            : ['success' => false, 'message' => 'Erro ao atualizar usuário'];
+    // fotoPerfil pode ser NULL ou string
+    $dados['fotoPerfil'] = $dados['fotoPerfil'] ?? null;
+
+    $sucesso = $this->usuarioModel->adicionar($dados);
+
+    return $sucesso
+        ? ['success' => true, 'message' => 'Usuário adicionado com sucesso']
+        : ['success' => false, 'message' => 'Erro ao adicionar usuário'];
+}
+
+public function atualizar($id, $dados) {
+    // fotoPerfil pode vir NULL, ou string, ou nem vir
+    if (!array_key_exists('fotoPerfil', $dados)) {
+        // não mexe na foto
     }
+
+    $sucesso = $this->usuarioModel->atualizar($id, $dados);
+
+    return $sucesso
+        ? ['success' => true, 'message' => 'Usuário atualizado com sucesso']
+        : ['success' => false, 'message' => 'Erro ao atualizar usuário'];
+}
+
+
 
     public function deletar($id) {
         $sucesso = $this->usuarioModel->deletar($id);

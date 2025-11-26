@@ -85,6 +85,7 @@ header {
   align-items: center;
   font-size: 2rem;
   color: #644032;
+  overflow: hidden; 
 }
 
 .btn-foto {

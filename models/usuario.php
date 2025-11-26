@@ -1,6 +1,6 @@
 <?php 
 
-class Usuario {
+    class Usuario {
 
     private $conexao;
     private $tabela = 'tb_usuario';
@@ -9,6 +9,7 @@ class Usuario {
     public $nomeUsuario;
     public $email;
     public $senha;
+    public $fotoPerfil; // <-- ADICIONADO
 
     public function __construct($Banco){
         $this->conexao = $Banco;
@@ -21,60 +22,82 @@ class Usuario {
         $stmt->bindParam(1, $this->email);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
-    }  
+    }
 
-
-
-    // Adiciona usuário (com hash da senha)
+    // Adicionar usuário (não exige foto)
     public function adicionar($dados){
-        $query = "INSERT INTO " . $this->tabela . " (nomeUsuario, email, senha) VALUES (?, ?, ?)";
+        $query = "INSERT INTO " . $this->tabela . " (nomeUsuario, email, senha, fotoPerfil)
+                  VALUES (?, ?, ?, ?)";
+
         $stmt = $this->conexao->prepare($query);
 
         $senhaHash = password_hash($dados['senha'], PASSWORD_DEFAULT);
 
-        return $stmt->execute([$dados['nomeUsuario'], $dados['email'], $senhaHash]);
+        $foto = $dados['fotoPerfil'] ?? null;
+
+        return $stmt->execute([
+            $dados['nomeUsuario'],
+            $dados['email'],
+            $senhaHash,
+            $foto
+        ]);
     }
 
-    // Atualiza usuário
+    // Atualizar usuário (com ou sem senha, com ou sem foto)
     public function atualizar($id, $dados){
-        if (!empty($dados['senha'])) {
-            $senhaHash = password_hash($dados['senha'], PASSWORD_DEFAULT);
-            $query = "UPDATE " . $this->tabela . " SET nomeUsuario = ?, email = ?, senha = ? WHERE idUsuario = ?";
-            $stmt = $this->conexao->prepare($query);
-            return $stmt->execute([$dados['nomeUsuario'], $dados['email'], $senhaHash, $id]);
-        } else {
-            $query = "UPDATE " . $this->tabela . " SET nomeUsuario = ?, email = ? WHERE idUsuario = ?";
-            $stmt = $this->conexao->prepare($query);
-            return $stmt->execute([$dados['nomeUsuario'], $dados['email'], $id]);
+
+        $campos = [];
+        $params = [];
+
+        // Campos opcionais
+        if (isset($dados['nomeUsuario'])) {
+            $campos[] = "nomeUsuario = ?";
+            $params[] = $dados['nomeUsuario'];
         }
+
+        if (isset($dados['email'])) {
+            $campos[] = "email = ?";
+            $params[] = $dados['email'];
+        }
+
+        if (!empty($dados['senha'])) {
+            $campos[] = "senha = ?";
+            $params[] = password_hash($dados['senha'], PASSWORD_DEFAULT);
+        }
+
+        if (array_key_exists('fotoPerfil', $dados)) { // permite NULL
+            $campos[] = "fotoPerfil = ?";
+            $params[] = $dados['fotoPerfil'];
+        }
+
+        if (empty($campos)) return false;
+
+        $query = "UPDATE " . $this->tabela . " SET " . implode(", ", $campos) . " WHERE idUsuario = ?";
+        $params[] = $id;
+
+        $stmt = $this->conexao->prepare($query);
+        return $stmt->execute($params);
     }
 
-    // Deleta usuário  
     public function deletar($id){
         $query = "DELETE FROM " . $this->tabela . " WHERE idUsuario = ?";
         $stmt = $this->conexao->prepare($query);
         return $stmt->execute([$id]);
     }
 
-    // Verifica senha com hash
-    public function verificar_senha($senhaFornecida, $senhaBanco){
-        return password_verify($senhaFornecida, $senhaBanco);
-    }
-
-    // Lista todos
     public function listar(){
-        $query = "SELECT idUsuario, nomeUsuario, email FROM " . $this->tabela;
+        $query = "SELECT idUsuario, nomeUsuario, email, fotoPerfil FROM " . $this->tabela;
         $stmt = $this->conexao->prepare($query);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // Buscar por ID
     public function buscar_por_id($id){
-        $query = "SELECT idUsuario, nomeUsuario, email FROM " . $this->tabela . " WHERE idUsuario = ?";
+        $query = "SELECT idUsuario, nomeUsuario, email, fotoPerfil FROM " . $this->tabela . " WHERE idUsuario = ?";
         $stmt = $this->conexao->prepare($query);
         $stmt->execute([$id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 }
+
 ?>

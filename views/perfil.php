@@ -9,16 +9,12 @@ require_once __DIR__ . '../../controllers/salvo_controller.php';
 
 $banco = new Banco();
 $conexao = $banco->getConexao();
+
 $usuarioController = new UsuarioController($conexao);
-
-
-
 $salvo = new Salvo($conexao);
 $restauranteController = new RestauranteController($conexao);
 
-
-
-// Verifica se o usuário está logado
+// Verifica login
 if (!isset($_SESSION['usuario'])) {
     header("Location: login.php");
     exit;
@@ -28,16 +24,59 @@ $usuarioLogado = $_SESSION['usuario'];
 $idUsuario = $usuarioLogado['idUsuario'];
 $mensagemSucesso = "";
 
-$avaliacoes = $salvo->listar_por_usuario($idUsuario);
+// --- UPLOAD DE FOTO ---
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['foto'])) {
+    $foto = $_FILES['foto'];
 
-// Atualiza nome se o formulário foi enviado
+    if ($foto['error'] === 0) {
+        $pasta = __DIR__ . "/uploads/fotos_perfil/";
+        if (!is_dir($pasta)) mkdir($pasta, 0777, true);
+
+        $ext = strtolower(pathinfo($foto['name'], PATHINFO_EXTENSION));
+        if (!in_array($ext, ['jpg', 'jpeg', 'png'])) $ext = 'jpg';
+
+        $nomeArquivo = "perfil_{$idUsuario}_" . time() . ".{$ext}";
+        $caminhoCompleto = $pasta . $nomeArquivo;
+
+        if (move_uploaded_file($foto['tmp_name'], $caminhoCompleto)) {
+            $dadosImagem = file_get_contents($caminhoCompleto);
+            $base64 = 'data:image/' . $ext . ';base64,' . base64_encode($dadosImagem);
+
+            $resultadoAtualizar = $usuarioController->atualizar($idUsuario, ['fotoPerfil' => $base64]);
+
+            if ($resultadoAtualizar['success'] ?? false) {
+                // Atualiza sessão e variável local
+                $_SESSION['usuario']['fotoPerfil'] = $base64;
+                $usuarioLogado['fotoPerfil'] = $base64;
+
+                echo json_encode([
+                    'success' => true,
+                    'foto' => $base64
+                ]);
+            } else {
+                echo json_encode([
+                    'success' => false,
+                    'error' => 'Foto movida, mas não foi possível atualizar o banco'
+                ]);
+            }
+        } else {
+            echo json_encode(['success' => false, 'error' => 'Falha ao mover arquivo']);
+        }
+    } else {
+        echo json_encode(['success' => false, 'error' => 'Erro no upload']);
+    }
+    exit;
+}
+
+// --- ATUALIZA NOME ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['novo_nome'])) {
     $novoNome = trim($_POST['novo_nome']);
     if ($novoNome && $novoNome !== $usuarioLogado['nomeUsuario']) {
-        $resultado = $usuarioController->atualizar($usuarioLogado['idUsuario'], [
+        $resultado = $usuarioController->atualizar($idUsuario, [
             'nomeUsuario' => $novoNome,
-            'email' => $usuarioLogado['email'] // email precisa ser enviado também
+            'email' => $usuarioLogado['email']
         ]);
+
         if ($resultado['success']) {
             $_SESSION['usuario']['nomeUsuario'] = $novoNome;
             $usuarioLogado['nomeUsuario'] = $novoNome;
@@ -48,33 +87,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['novo_nome'])) {
     }
 }
 
+// --- CARREGA AVALIAÇÕES ---
+$avaliacoes = $salvo->listar_por_usuario($idUsuario);
 
+// --- CARREGA DADOS ATUALIZADOS DO USUÁRIO ---
+$dadosAtualizados = $usuarioController->buscarPorId($idUsuario);
+if (!isset($dadosAtualizados['error'])) {
+    $usuarioLogado = array_merge($usuarioLogado, $dadosAtualizados);
+    $_SESSION['usuario'] = $usuarioLogado;
+}
 
-
-
-// Função para converter ID da tag para nome
+// --- FUNÇÕES AUXILIARES ---
 function tagNome($id) {
     $tags = [
-        1 => "Chinesa",
-        2 => "Italiana",
-        3 => "Japonesa",
-        4 => "Brasileira",
-        5 => "Mexicana",
-        6 => "Indiana",
-        7 => "Fast Food",
-        8 => "Vegana",
-        9 => "Argentina",
+        1 => "Chinesa", 2 => "Italiana", 3 => "Japonesa", 4 => "Brasileira",
+        5 => "Mexicana", 6 => "Indiana", 7 => "Fast Food", 8 => "Vegana", 9 => "Argentina"
     ];
     return $tags[$id] ?? "Outro";
 }
 
-// Função para gerar estrelas
 function gerarEstrelas($nota) {
     $cheias = round($nota);
     $html = "";
-    for ($i = 1; $i <= 5; $i++) {
-        $html .= $i <= $cheias ? "★" : "☆";
-    }
+    for ($i = 1; $i <= 5; $i++) $html .= $i <= $cheias ? "★" : "☆";
     return $html;
 }
 
@@ -116,9 +151,23 @@ function gerarEstrelas($nota) {
         <div class="perfil-topo">
             <button class="btn-voltar" onclick="history.back()">←</button>
             <div class="foto-perfil">
-                <img id="imagem-perfil" src="" alt="Foto de Perfil" style="display:none;" />
-                <input type="file" id="upload-foto" accept="image/*" style="display:none;" />
-                <span>📷</span>
+
+            <?php if (!empty($usuarioLogado['fotoPerfil'])): ?>
+                <img id="imagem-perfil" 
+                    src="<?= htmlspecialchars($usuarioLogado['fotoPerfil']) ?>" 
+                    style="width:100%; height:100%; object-fit:cover; border-radius:50%;" />
+            <?php else: ?>
+                <img id="imagem-perfil" 
+                        src="<?= htmlspecialchars($usuarioLogado['fotoPerfil'] ) ?>" 
+                       >
+                                    <span id="icone-foto">📷</span>
+                                <?php endif; ?>
+
+                        <input type="file" id="upload-foto" accept="image/*" style="display:none;" />
+
+
+
+
                 <button class="btn-foto">+</button>
             </div>
             <div class="info-usuario">
@@ -144,6 +193,7 @@ function gerarEstrelas($nota) {
 
         <div class="cards-container">
 
+<div id="mensagem-foto" style="color:green; margin-bottom:10px;"></div>
 
     <?php foreach ($avaliacoes as $a): 
         $restaurante = $restauranteController->buscarPorId($a['idRestaurante']);
@@ -224,34 +274,80 @@ function gerarEstrelas($nota) {
     </script>
 
     <script>
-        const btnFoto = document.querySelector(".btn-foto");
-        const inputFoto = document.getElementById("upload-foto");
-        const imgPerfil = document.getElementById("imagem-perfil");
-        const fotoPerfil = document.querySelector(".foto-perfil");
 
-        btnFoto.addEventListener("click", () => {
-            inputFoto.click();
-        });
+const btnFoto = document.querySelector(".btn-foto");
+const inputFoto = document.getElementById("upload-foto");
+const imgPerfil = document.getElementById("imagem-perfil");
+const iconeFoto = document.getElementById("icone-foto"); // emoji 📷
 
-        inputFoto.addEventListener("change", () => {
-            const file = inputFoto.files[0];
-            if (file && file.type.startsWith("image/")) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    imgPerfil.src = e.target.result;
-                    imgPerfil.style.display = "block";
-                    imgPerfil.style.width = "100%";
-                    imgPerfil.style.height = "100%";
-                    imgPerfil.style.objectFit = "cover";
-                    imgPerfil.style.borderRadius = "50%";
-                    // Remove emoji (📷) se estiver visível
-                    const emoji = fotoPerfil.querySelector("span");
-                    if (emoji) emoji.style.display = "none";
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-    </script>
+// Crie uma div para mensagens, se não existir
+let mensagemFoto = document.getElementById("mensagem-foto");
+if (!mensagemFoto) {
+    mensagemFoto = document.createElement("div");
+    mensagemFoto.id = "mensagem-foto";
+    mensagemFoto.style.color = "green";
+    mensagemFoto.style.marginBottom = "10px";
+    document.querySelector(".perfil-container").prepend(mensagemFoto);
+}
+
+btnFoto.addEventListener("click", () => inputFoto.click());
+
+inputFoto.addEventListener("change", () => {
+    const file = inputFoto.files[0];
+    if (!file || !file.type.startsWith("image/")) return;
+
+    // Desabilita botão e mostra carregando
+    btnFoto.disabled = true;
+    btnFoto.textContent = "Carregando...";
+    mensagemFoto.textContent = ""; // limpa mensagens anteriores
+
+    const formData = new FormData();
+    formData.append("foto", file);
+
+    fetch("perfil.php", {
+        method: "POST",
+        body: formData,
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(res => res.json())
+    .then(data => {
+        // Habilita botão novamente
+        btnFoto.disabled = false;
+        btnFoto.textContent = "+";
+
+        if (data.success) {
+            // Atualiza a imagem de perfil
+            imgPerfil.src = data.foto;
+            imgPerfil.style.display = "block";
+            imgPerfil.style.width = "100%";
+            imgPerfil.style.height = "100%";
+            imgPerfil.style.objectFit = "cover";
+            imgPerfil.style.borderRadius = "50%";
+
+            if (iconeFoto) iconeFoto.style.display = "none";
+
+            // MOSTRA MENSAGEM DE SUCESSO
+            mensagemFoto.style.color = "green";
+            mensagemFoto.textContent = data.message || "Foto enviada com sucesso!";
+            setTimeout(() => mensagemFoto.textContent = "", 3000); // some depois de 3s
+        } else {
+            // MOSTRA MENSAGEM DE ERRO
+            mensagemFoto.style.color = "red";
+            mensagemFoto.textContent = data.error || "Erro ao enviar a foto";
+            setTimeout(() => mensagemFoto.textContent = "", 5000);
+        }
+    })
+    .catch(err => {
+        btnFoto.disabled = false;
+        btnFoto.textContent = "+";
+
+        mensagemFoto.style.color = "red";
+        mensagemFoto.textContent = "Erro inesperado: " + err;
+        setTimeout(() => mensagemFoto.textContent = "", 5000);
+    });
+});
+
+</script>
 </body>
 
 </html>
